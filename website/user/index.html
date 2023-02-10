@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Der Abi Subathon Timer</title>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      <link rel="stylesheet" href="/login/main.css">
+      <link rel="stylesheet" href="/login/style.css">
+      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script><script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script><script src="/js/jquery.gwfselect.js"></script><script src="/js/spectrum.js"></script>
+      <link rel="stylesheet" href="css/spectrum.css">
+      <style>body{ padding: 30px; }
+      </style>
+   </head>
+   <body>
+      <h1>Marathon Timer</h1>
+      <div ng-app="tabs" ng-cloak style="width: 60%; margin:0 auto;">
+         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+         <style>md-ink-bar{
+            background: rgba(66, 65, 80, 0.72) !important;
+            }
+            .md-active{
+            color: rgb(15, 15, 15) !important;
+            }
+         </style>
+         <md-content>
+            <md-tabs md-dynamic-height md-border-bottom md-center-tabs="true">
+               <md-tab label="Time Settings">
+                  <md-content class="md-padding">
+                     <form method="POST" id="settings">
+                        <p>
+                        <h3>Tips and Bits: </h3>
+                        <input type="number" name="donoPerEuro" value="2"> minutes per 1 Euro  <span class="tab"></span>
+                        <input type="number" name="preHundredsBits" value="2"> minutes per 100 bits  <br><br>
+                        <input type="number" name="donoFive" value="10"> minutes per 5 Euro  <span class="tab"></span>
+                        <input type="number" name="fivehunderdBits" value="10"> minutes per 500 bits  <br><br>
+                        <input type="number" name="donoTen" value="25"> minutes per 10 Euro  <span class="tab"></span>
+                        <input type="number" name="thousandBits" value="30"> minutes per 1000 bits  <br><br>
+                        <input type="number" name="donoFifty" value="150"> minutes per 50 Euro  <span class="tab"></span>
+                        <input type="number" name="fivethousandBits" value="180"> minutes per 5000 bits  <br><br>
+                        <input type="number" name="donoHundred" value="350"> minutes per 100 Euro  <span class="tab"></span>
+                        <input type="number" name="tenthousandBits" value="400"> minutes per 10.000 bits  <br><br>
+                        <input type="number" name="donoTwoHundredFifty" value="1000"> minutes per 250 Euro  <span class="tab"></span>
+                        <input type="number" name="twentyfivethousandBits" value="1000"> minutes per 25.000 bits <br><br>
+                        <div id="container-wrapper" style="width: 100%;">
+                           <h3>Subs:</h3>
+                           <div id="container-left" style="width: 50%; float: left;">
+                              <input type="number" name="perSub" value="5"> minutes per sub<br><br>
+                              <input type="number" name="fiveSubs" value="30">minutes per 5 subs<br><br>
+                              <input type="number" name="tenSubs" value="70"> minutes per 10 subs<br><br>
+                           </div>
+                           <div id="container-right" style="margin-left: 50%;">
+                              <span class="tab"></span><input type="number" name="twentySubs" value="150"> minutes per 20 subs<br><br>
+                              <span class="tab"></span><input type="number" name="fiftySubs" value="450"> minutes per 50 subs<br><br>
+                              <span class="tab"></span><input type="number" name="hunredSubs" value="1000"> minutes per 100 subs<br><br>
+                           </div>
+                        </div>
+                        <p>
+                           <br><button class="button special" type="submit" id="saveSetBtn">Save Settings</button><script>$('#settings').submit(function(event){
+                              event.preventDefault();
+                              $.post('/savesettings', $('#settings').serialize(), function(){
+                                $('#saveSetBtn').html('Settings Saved!');
+                                $('#saveSetBtn').attr('disabled', true);
+                                setTimeout(function(){
+                                  $('#saveSetBtn').html('Save Settings');
+                                  $('#saveSetBtn').attr('disabled', false);
+                                  }, 5000);
+                              });
+                              });
+                           </script>
+                        </p>
+                     </form>
+                  </md-content>
+               </md-tab>
+               <md-tab label="Add Time">
+                  <md-content class="md-padding">
+                     <form method="POST" id="addtimer">
+                        <div id="addtimer-wrapper" style="width: 50%; margin: 15px auto 110px auto;">
+                           <div id="addtimer-wrapper-text" style="width: 100%; margin: 0 auto;">
+                              <h3>How Much Time To Manually Add:</h3>
+                           </div>
+                           <div id="addtimer-wrapper-hour" style="width: 33%; float: left; text-align: center;"><input type="number" name="hours" value="0"><br> Hours  </div>
+                           <div id="addtimer-wrapper-min" style="width: 33%; float: left; text-align: center;"><input type="number" name="minutes" value="10"><br> Minutes  </div>
+                           <div id="addtimer-wrapper-sec" style="width: 33%; float: left; text-align: center;"><input type="number" name="seconds" value="0"><br> Seconds  </div>
+                           <br>
+                        </div>
+                        <div id="addtimer-wrapper-submit" style="width: 50%; margin: 15px auto 10px auto;">
+                           <button class="button special" type="submit" id="setAddTimerBtn">Add Time</button><script>$('#addtimer').submit(
+                              function(event){
+                              event.preventDefault();
+                              $.post('/addtimer', $('#addtimer').serialize(), function(res){
+                                $('#setAddTimerBtn').html('Time Added!');
+                                $('#setAddTimerBtn').attr('disabled', true);
+                                setTimeout(function(){
+                                  $('#setAddTimerBtn').html('Add Time');
+                                  $('#setAddTimerBtn').attr('disabled', false);
+                                  }, 5000);
+                              }, 'json');
+                              });
+                           </script>
+                        </div>
+                     </form>
+                  </md-content>
+               </md-tab>
+               <md-tab label="Set Timer">
+                  <md-content class="md-padding">
+                     <form method="POST" id="timer">
+                        <div id="timer-wrapper" style="width: 50%; margin: 15px auto 110px auto;">
+                           <div id="timer-wrapper-text" style="width: 100%; margin: 0 auto;">
+                              <h3>Set the starting time:</h3>
+                           </div>
+                           <div id="timer-wrapper-hour" style="width: 33%; float: left; text-align: center;"><input type="number" name="hours" value="15"><br> Hours  </div>
+                           <div id="timer-wrapper-min" style="width: 33%; float: left; text-align: center;"><input type="number" name="minutes" value="0"><br> Minutes  </div>
+                           <div id="timer-wrapper-sec" style="width: 33%; float: left; text-align: center;"><input type="number" name="seconds" value="0"><br> Seconds  </div>
+                           <br>
+                        </div>
+                        <div id="timer-wrapper-max" style="width: 50%; margin: 15px auto 110px auto;">
+                           <div id="timer-wrapper-maxtext" style="width: 100%; margin: 0 auto;">
+                              <h3>Set the maximum amount of time that can be added by subs/tips/bits:</h3>
+                           </div>
+                           <div id="timer-wrapper-maxhour" style="width: 33%; float: left; text-align: center;"><input type="number" name="maxhours" value="9"><br> Hours  </div>
+                           <div id="timer-wrapper-maxmin" style="width: 33%; float: left; text-align: center;"><input type="number" name="maxminutes" value="0"><br> Minutes  </div>
+                           <div id="timer-wrapper-maxsec" style="width: 33%; float: left; text-align: center;"><input type="number" name="maxseconds" value="0"><br> Seconds  </div>
+                           <br>
+                        </div>
+                        <div id="timer-wrapper-submit" style="width: 50%; margin: 15px auto 10px auto;">
+                           <button class="button special" type="submit" id="setTimerBtn">Set Timer</button><script>$('#timer').submit(function(event){
+                              event.preventDefault();
+                              $.post('/settimer', $('#timer').serialize(), function(res){
+                                $('#setTimerBtn').html('Timer Set!');
+                                $('#setTimerBtn').attr('disabled', true);
+                                setTimeout(function(){
+                                  $('#setTimerBtn').html('Set Timer');
+                                  $('#setTimerBtn').attr('disabled', false);
+                                  }, 5000);
+                                document.getElementById('endtime-wrapper-submit').innerHTML = 'Max time is ending at <br />' + new Date(res.newtime);
+                              }, 'json');
+                              });
+                           </script>
+                        </div>
+                        <div id="endtime-wrapper-submit" style="width: 50%; margin: 15px auto 10px auto;">
+                           <script>document.getElementById('endtime-wrapper-submit').innerHTML = 'Max time is ending at <br />' + new Date(1673880559000);</script>
+                        </div>
+                     </form>
+                  </md-content>
+               </md-tab>
+            
+               <md-tab label="Connect Streamlabs">
+                  <md-content class="md-padding">
+                     <p></p>
+                     Click the link below to connect your Streamlabs account and enable donations adding time
+                     <form action="auth/streamlabs"><br><button class="button special" type="submit">Link to Streamlabs</button></form>
+                  </md-content>
+               </md-tab>
+               <md-tab label="Timer Widget">
+                  <md-content class="md-padding">
+                     <div class="wrapper" ng-click="showme=true">
+                        <p ng-hide="showme" style="font-size: 30px; font-weight: 500; background-color:lightblue;">Click here to unhide widget link<br>Use this link as a browser source</p>
+                        <p ng-show="showme" id="timerlink"></p>
+                        <br>
+                     </div>
+                     <form action="/newuid"><br><button class="button special" type="submit">Generate New Link</button></form>
+                  </md-content>
+               </md-tab>
+               <md-tab label="Logout">
+                  <md-content class="md-padding">
+                     <form action="/logout"><br><button class="button special" type="submit">Logout</button></form>
+                  </md-content>
+               </md-tab>
+            </md-tabs>
+            <script type="text/javascript">angular.module('tabs', ['ngMaterial']).config(['$mdThemingProvider', function($mdThemingProvider) {
+               $mdThemingProvider.generateThemesOnDemand(true);
+               }]);
+            </script><script>$(function () {
+               $('#gwf').gwfselect().bind('gwfselectchange', function (event, fontInfo) {
+                 $('gwf').val(fontInfo);
+                 console.log(fontInfo);
+                 $('#preview').css('font-family', fontInfo['font-family']);
+               });
+               });
+            </script>
+            <script src="/login/script.js"></script>
+         </md-content>
+         <h6>Made By </h6>
+         <a href="http://www.twitch.tv/yarissi">YaRissi @ Twitch</a><br><br><br>
+      </div>
+   </body>
+</html>

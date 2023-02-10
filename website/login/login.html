@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Marathon Timer</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="/login/main.css" />
+    <link rel="stylesheet" href="/login/style.css" />
+  </head>
+  <body>
+    <h1>Der Abi Subathon Timer</h1>
+    <div style="width: 40%; margin: 0 auto">
+      <p></p>
+      This website is for creating a Twitch marathon countdown timer that can
+      have extra time added from bits, subs/resubs, and Streamlabs donations.
+      <form action="/auth/twitch">
+        <br /><button class="button special" type="submit">
+          Login with Twitch
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
