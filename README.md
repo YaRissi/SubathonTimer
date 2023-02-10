@@ -1,4 +1,4 @@
-[![SubathonTimer](resources\twitch.png)](https://github.com/yarissi/SubathonTimer)
+[![SubathonTimer](resources/twitch.png)](https://github.com/yarissi/SubathonTimer)
 
 
 # Subathon Timer
